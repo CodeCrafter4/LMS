@@ -24,7 +24,7 @@ export const clerkWebhook = async (req, res) => {
                 imgeUrl: data.image_url,
                
             }
-            await User.created(userData)
+            await User.create(userData)
             res.json({})
             break;
         }
