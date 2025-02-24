@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { dummyCourses } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import humanaizeDuration from "humanize-duration";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 export const AppContext = createContext();
 
@@ -10,10 +11,12 @@ export const AppContextProvider = (props) => {
 
   const navigate = useNavigate();
 
+  const { getToken } = useAuth();
+  const { user } = useUser();
+
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
-
 
   //fech all courses
   const fetchAllCourses = async () => {
@@ -36,7 +39,7 @@ export const AppContextProvider = (props) => {
   const calculateChapterTime = (chapter) => {
     let time = 0;
     chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration));
-    return humanaizeDuration(time * 60 * 1000, {units: ["h", "m"]});
+    return humanaizeDuration(time * 60 * 1000, { units: ["h", "m"] });
   };
 
   //function to calculate course duration
@@ -46,8 +49,8 @@ export const AppContextProvider = (props) => {
     course.courseContent.map((chapter) =>
       chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration))
     );
-    return humanaizeDuration(time * 60 * 1000, {units:["h", "m"]});
-  }
+    return humanaizeDuration(time * 60 * 1000, { units: ["h", "m"] });
+  };
 
   //function to calculte number of lectures in the course
 
@@ -70,6 +73,17 @@ export const AppContextProvider = (props) => {
     fetchAllCourses();
     fetchUserEnrolledCourses();
   });
+
+  const logtoken = async () => {
+    console.log(await getToken());
+  };
+
+  
+  useEffect(() => {
+    if (user) {
+      logtoken();
+    }
+  }, [user]);
 
   const value = {
     currency,
