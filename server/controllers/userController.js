@@ -1,8 +1,10 @@
 import Course from "../models/Course.js";
 import { courseProgress } from "../models/CourseProgress.js";
-import Purchase from "../models/purchase.js";
+import { Purchase } from "../models/Purchase.js";
 import User from "../models/User.js";
 import Stripe from "stripe";
+
+//Get User Data
 
 export const getUserData = async (req, res) => {
   try {
@@ -32,7 +34,7 @@ export const UserEnrolledCourses = async (req, res) => {
 
 //purchase Courses
 
-export const purchasedCourse = async (req, res) => {
+export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
     const { orgin } = req.headers;
@@ -41,15 +43,14 @@ export const purchasedCourse = async (req, res) => {
     const courseData = await Course.findById(courseId);
 
     if (!userData || !courseData) {
-      return res.json({ success: false, message: "User not found" });
+      return res.json({ success: false, message: "Data not found" });
     }
 
     const purchaseData = {
       courseId: courseData._id,
       userId,
       amount: (
-        courseData.coursePrice -
-        (courseData.discount * courseData.coursePrice) / 100
+        courseData.coursePrice - courseData.discount * courseData.coursePrice / 100
       ).toFixed(2),
     };
 
@@ -74,8 +75,8 @@ export const purchasedCourse = async (req, res) => {
       },
     ];
     const session = await stripeInstance.checkout.sessions.create({
-      success_url: `${orgin}/loading/my-enrollments`,
-      cancel_url: `${orgin}/`,
+      success_url: `${origin}/loading/my-enrollments`,
+      cancel_url: `${origin}/`,
       line_items: line_items,
       mode: "payment",
       metadata: { purchaseId: newPurchase._id.toString() },
@@ -94,10 +95,10 @@ export const updateUserCourseProgress = async (req, res) => {
     const { courseId, lectureId } = req.body;
     const progressData = await courseProgress.findOne({ userId, courseId });
 
-    if (!progressData) {
+    if (progressData) {
       if (progressData.lectureCompleted.includes(lectureId)) {
         return res.json({
-          success: false,
+          success: true,
           message: "Lecture already completed",
         });
       }
@@ -138,7 +139,7 @@ export const addUserRating = async (req, res) => {
   const { courseId, rating } = req.body;
 
   if (!courseId || !userId || !rating || rating < 1 || rating > 5) {
-    return res.json({ success: false, message: "Invalid input" });
+    return res.json({ success: false, message: "Invalid Details" });
   }
   try {
     const course = await Course.findById(courseId);
@@ -157,7 +158,7 @@ export const addUserRating = async (req, res) => {
     }
 
     const existingRatingIndex = course.courseRating.findIndex(
-      (r) => r.userId === userId
+      r => r.userId === userId
     );
 
     if (existingRatingIndex > -1) {

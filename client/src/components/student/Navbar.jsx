@@ -1,16 +1,41 @@
-import React, { useContext } from 'react'
-import { assets } from '../../assets/assets'
-import { Link } from 'react-router-dom'
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
-import { AppContext } from '../../context/AppContex'
+import React, { useContext } from "react";
+import { assets } from "../../assets/assets";
+import { Link } from "react-router-dom";
+import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { AppContext } from "../../context/AppContex";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
+  const isCourseListPage = location.pathname.includes("/course-list");
+  const { navigate, isEducator, backendUrl, setIsEducator, getToken } =
+    useContext(AppContext);
 
-  const isCourseListPage=location.pathname.includes("/course-list")
-  const { navigate, isEducator } = useContext(AppContext);
+  const { openSignIn } = useClerk();
+  const { user } = useUser();
 
-  const { openSignIn } =useClerk()
-  const { user } =useUser()
+  const becomeEducator = async () => {
+    try {
+      if (isEducator) {
+        navigate("/educator");
+        return;
+      }
+      const token = await getToken();
+      const { data } = await axios.get(
+        backendUrl + "/api/educator/update-role",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setIsEducator(true);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div
       className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b border-gray-500 py-4} ${
@@ -36,8 +61,8 @@ const Navbar = () => {
         <div className="flex items-center gap-5">
           {user && (
             <>
-              <button onClick={() => navigate("/educator")}>
-                {isEducator ? "Teacher Portal" : "Become a Mentor"}
+              <button onClick={becomeEducator}>
+                {isEducator ? "Mentor Portal" : "Become a Mentor"}
               </button>
               |<Link to="/my-enrollments">Registered Courses</Link>
             </>
@@ -59,8 +84,8 @@ const Navbar = () => {
         <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
           {user && (
             <>
-              <button onClick={() => navigate("/educator")}>
-                {isEducator ? "Educator Dashboard" : "Become Educator"}
+              <button onClick={becomeEducator}>
+                {isEducator ? "Mentor Portal" : "Become a Mentor"}
               </button>
               |<Link to="/my-enrollments">My Enrollments</Link>
             </>
@@ -76,6 +101,6 @@ const Navbar = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

@@ -1,8 +1,9 @@
 import { Webhook } from "svix";
 import User from "../models/User.js";
 import Stripe from "stripe";
-import { Purchase } from "../models/purchase.js";
+
 import Course from "../models/Course.js";
+import { Purchase } from "../models/Purchase.js";
 
 //Api controller function to manage clerk user with database
 
@@ -114,7 +115,8 @@ export const stripeWebhooks = async (request, response) => {
          purchaseData.status = 'failed'
          await purchaseData.save();
 
-      break;}
+      break;
+    }
     //....handle other event types
     default:
       console.log(`Unhandled event type: ${event.type}`);

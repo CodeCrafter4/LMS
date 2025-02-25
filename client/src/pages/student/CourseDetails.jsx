@@ -6,6 +6,8 @@ import { assets } from "../../assets/assets";
 import humanaizeDuration from "humanize-duration";
 import Footer from "../../components/student/Footer";
 import YouTube from "react-youtube";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -23,16 +25,57 @@ const CourseDetails = () => {
     calculateCourseDuration,
     calculateNumberOfLectures,
     currency,
+    backendUrl,
+    userData,getToken
   } = useContext(AppContext);
 
   const fechCourseData = async () => {
-    const findCourse = allCourses.find((course) => course._id === id);
-    setCourseData(findCourse);
+    try{
+      const { data } = await axios.get(backendUrl + '/api/course/' + id)
+
+      if(data.success){
+        setCourseData(data.courseData)
+      }else{
+        toast.error(data.message)
+      }
+    }catch(error){
+      toast.error(error.message)
+    }
+  
   };
+
+  const enrollCourse =async()=>{
+   try{  
+        if(!userData){
+          return toast.warn('Login to Apply')
+        }
+        if(isAlredyEnrolled){
+          return toast.warn('alredy Enrolled')
+        }
+        const token =await getToken()
+
+        const { data } = await axios.post(backendUrl + '/api/user/purchase', {courseId:courseData._id},{headers:{ Authorization: `Bearer ${token}`}})
+        if(data.success){
+          const { session_url} = data
+          window.location.replace(session_url)
+        }else{
+          toast.error(data.message)
+        } 
+
+    }catch(error){
+      toast.error(data.message)
+    }
+     }
 
   useEffect(() => {
     fechCourseData();
-  }, [allCourses]);
+  }, []);
+
+  useEffect(() => {
+    if(userData && courseData){
+      setIsAlredyEnrolled(userData.enrollCourse.includes(courseData._id))
+    }
+  },[userData, courseData])
 
   const toggleSection = (index) => {
     setOpenSection((prev) => ({ ...prev, [index]: !prev[index] }));
@@ -42,7 +85,9 @@ const CourseDetails = () => {
     <>
       <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left">
         <div className="absolute top-0 left-0 w-full h-section-height -z-1 bg-gradient-to-b from-red-100/70"></div>
+
         {/* //left column */}
+        
         <div className="max-w-xl z-10 text-gray-500">
           <h1 className="md:text-course-details-heading-large text-course-details-heading-small font-semibold text-gray-800">
             {courseData.courseTitle}
@@ -83,7 +128,7 @@ const CourseDetails = () => {
           </div>
 
           <p className="text-sm">
-            course by <span className="text-red-800 underline">AbukiTech</span>
+            course by <span className="text-red-800 underline">{courseData.educator.name}</span>
           </p>
 
           <div className="pt-8 text-gray-800 ">
@@ -239,7 +284,7 @@ const CourseDetails = () => {
               </div>
             </div>
 
-            <button className="md:mt-6 mt-4 w-full py-3 rounded bg-red-800 text-white font-medium">
+            <button onclick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-red-800 text-white font-medium">
               {isAlredyEnrolled ? "Alredy Applied" : "Apply Now"}
             </button>
 
