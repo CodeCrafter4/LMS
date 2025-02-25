@@ -31,7 +31,7 @@ export const addCourse = async (req, res) => {
 
 
     if (!imageFile) {
-      return res.json({ success: false, message: "Thumbnaile Not Attached." });
+      return res.json({ success: false, message: "Thumbnaile not Attached." });
     }
 
     const parsedCourseData = await JSON.parse(courseData);
