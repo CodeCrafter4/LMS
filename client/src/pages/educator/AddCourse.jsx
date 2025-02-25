@@ -97,9 +97,7 @@ const handleLecture =(action, chapterId, lectureIndex)=>{
  const handleSubmit = async (e)=>{
   try{
     e.preventDefault();
-    if(!image){
-      toast.error('thumbnail not selected')
-    }
+   
 
     const courseData={
       courseTitle,
