@@ -284,7 +284,7 @@ const CourseDetails = () => {
               </div>
             </div>
 
-            <button onclick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-red-800 text-white font-medium">
+            <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-red-800 text-white font-medium">
               {isAlredyEnrolled ? "Alredy Applied" : "Apply Now"}
             </button>
 
