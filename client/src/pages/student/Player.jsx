@@ -8,6 +8,7 @@ import Footer from '../../components/student/Footer';
 import Rating from '../../components/student/Rating';
 import { toast } from 'react-toastify';
 import Loading from '../../components/student/Loading';
+import axios from 'axios';
 
 
 const Player = () => {
@@ -31,11 +32,11 @@ const Player = () => {
 
   const getCourseData=()=>{
     enrolledCourses.map((course)=>{
-      if(course._id===courseId){
+      if(course._id === courseId){
         setCourseData(course)
-        course.courseRatings.map(()=>{
-          if(item.userId===userData._id){
-          setInitialRating(isHtmlElement.rating);
+        course.courseRatings.map((item)=>{
+          if(item.userId === userData._id){
+          setInitialRating(item.rating);
               
           }
         })
@@ -44,10 +45,11 @@ const Player = () => {
   }
 
    const toggleSection = (index) => {
-     setOpenSection((prev) => ({ ...prev, [index]: !prev[index] }));
+     setOpenSection((prev) => 
+      ({ ...prev, [index]: !prev[index], }));
    };
   useEffect(()=>{
-    if(enrolledCourses.length >0){
+    if(enrolledCourses.length > 0){
        getCourseData();
     }
   },[enrolledCourses])
@@ -55,10 +57,11 @@ const Player = () => {
   const markLectureAsCompleted = async(lectureId)=>{
     try{
       const token = await getToken()
-      const { data }= await axios.post(backendUrl + 
-        '/api/user/update-course-progress',
-        {courseId, lectureId},
-        {headers: {Authorization: `Bearer ${token}`}})
+      const { data } = await axios.post(
+        backendUrl + "/api/user/update-course-progress",
+        { courseId, lectureId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       if(data.success){
         toast.success(data.message);
         getCourseProgress()
@@ -74,9 +77,13 @@ const Player = () => {
   const getCourseProgress = async()=>{
     try{
       const token = await getToken()
-      const { data }= await axios.get(backendUrl + '/api/user/get-course-progress',{courseId}, {headers: {Authorization: `Bearer ${token}`}})
+      const { data } = await axios.post(
+        backendUrl + "/api/user/get-course-progress",
+        { courseId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       if(data.success){
-        setProgressData(data.progressData)
+        setProgressData(data.progressData);
       }else{
         toast.error(data.message)
       }

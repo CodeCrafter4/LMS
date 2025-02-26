@@ -26,7 +26,8 @@ const CourseDetails = () => {
     calculateNumberOfLectures,
     currency,
     backendUrl,
-    userData,getToken
+    userData,
+    getToken
   } = useContext(AppContext);
 
   const fechCourseData = async () => {
@@ -44,7 +45,7 @@ const CourseDetails = () => {
   
   };
 
-  const enrollCourse =async()=>{
+  const enrollCourse = async()=>{
    try{  
         if(!userData){
           return toast.warn('Login to Apply')
@@ -73,7 +74,7 @@ const CourseDetails = () => {
 
   useEffect(() => {
     if(userData && courseData){
-      setIsAlredyEnrolled(userData.enrollCourse.includes(courseData._id))
+      setIsAlredyEnrolled(userData.enrolledCourses.includes(courseData._id))
     }
   },[userData, courseData])
 
@@ -128,7 +129,7 @@ const CourseDetails = () => {
           </div>
 
           <p className="text-sm">
-            course by <span className="text-red-800 underline">{courseData.educator.name}</span>
+            course by <span className="text-red-800 underline">{}</span>
           </p>
 
           <div className="pt-8 text-gray-800 ">

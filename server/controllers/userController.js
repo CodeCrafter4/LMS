@@ -1,5 +1,5 @@
 import Course from "../models/Course.js";
-import { courseProgress } from "../models/CourseProgress.js";
+import { CourseProgress } from "../models/CourseProgress.js";
 import { Purchase } from "../models/Purchase.js";
 import User from "../models/User.js";
 import Stripe from "stripe";
@@ -13,7 +13,7 @@ export const getUserData = async (req, res) => {
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
-    res.json({ success: true, data: user });
+    res.json({ success: true, user });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -37,7 +37,7 @@ export const UserEnrolledCourses = async (req, res) => {
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
-    const { orgin } = req.headers;
+    const { origin } = req.headers;
     const userId = req.auth.userId;
     const userData = await User.findById(userId);
     const courseData = await Course.findById(courseId);
@@ -93,7 +93,7 @@ export const updateUserCourseProgress = async (req, res) => {
   try {
     const userId = req.auth.userId;
     const { courseId, lectureId } = req.body;
-    const progressData = await courseProgress.findOne({ userId, courseId });
+    const progressData = await CourseProgress.findOne({ userId, courseId });
 
     if (progressData) {
       if (progressData.lectureCompleted.includes(lectureId)) {
@@ -105,7 +105,7 @@ export const updateUserCourseProgress = async (req, res) => {
       progressData.lectureCompleted.push(lectureId);
       await progressData.save();
     } else {
-      await progressData.create({
+      await CourseProgress.create({
         userId,
         courseId,
         lectureCompleted: [lectureId],
@@ -114,7 +114,7 @@ export const updateUserCourseProgress = async (req, res) => {
 
     res.json({ success: true, message: "progress updated" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: 'error.message' });
   }
 };
 
@@ -122,11 +122,12 @@ export const updateUserCourseProgress = async (req, res) => {
 
 export const getUserCourseProgress = async (req, res) => {
   try {
-    const userId = req.auth.userId;
-    const { courseId } = req.body;
-    const progressData = await courseProgress.findOne({ userId, courseId });
+    const userId = req.auth.userId
+    const { courseId } = req.body
+    const progressData = await CourseProgress.findOne({ userId, courseId });
 
     res.json({ success: true, progressData });
+
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -157,14 +158,14 @@ export const addUserRating = async (req, res) => {
       });
     }
 
-    const existingRatingIndex = course.courseRating.findIndex(
+    const existingRatingIndex = course.courseRatings.findIndex(
       r => r.userId === userId
     );
 
     if (existingRatingIndex > -1) {
-      course.courseRating[existingRatingIndex].rating = rating;
+      course.courseRatings[existingRatingIndex].rating = rating;
     } else {
-      course.courseRating.push({ userId, rating });
+      course.courseRatings.push({ userId, rating });
     }
 
     await course.save();

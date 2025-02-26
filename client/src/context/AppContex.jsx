@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "http://localhost:5000";
   const currency = import.meta.env.VITE_CURRENCY;
 
   const navigate = useNavigate();
@@ -92,13 +92,13 @@ const fechUserData = async ()=>{
   //function to calculte number of lectures in the course
 
   const calculateNumberOfLectures = (course) => {
-    let count = 0;
-    course.courseContent.forEach((chapter) => {
+    let totalLectures = 0;
+    course.courseContent.forEach(chapter => {
       if (Array.isArray(chapter.chapterContent)) {
-        count += chapter.chapterContent.length;
+        totalLectures += chapter.chapterContent.length;
       }
     });
-    return count;
+    return totalLectures;
   };
 
   //fech user Enrolled Courses
@@ -142,7 +142,12 @@ const fechUserData = async ()=>{
     calculateCourseDuration,
     calculateNumberOfLectures,
     enrolledCourses,
-    fetchUserEnrolledCourses,backendUrl,userData,setUserData,getToken,fetchAllCourses
+    fetchUserEnrolledCourses,
+    backendUrl,
+    userData,
+    setUserData,
+    getToken,
+    fetchAllCourses,
   };
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>

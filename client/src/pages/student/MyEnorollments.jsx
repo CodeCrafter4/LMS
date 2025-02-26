@@ -13,18 +13,21 @@ const MyEnorollments = () => {
     fetchUserEnrolledCourses,
     backendUrl,
     getToken,
-    calculateNumberOfLectures,
+    calculateNumberOfLectures
   } = useContext(AppContext);
   const [progressArray, setProgressArray] = useState([]);
-  const getCourseProgress=async()=>{
+  const getCourseProgress = async()=>{
     try{
       const token = await getToken()
       const tempProgressArray = await Promise.all(
-        enrolledCourses.map(async (course) =>{
-          const { data } =await axios.post(`${backendUrl}/api/user/get-course-progress`,{course: course._id}, {headers: {Authorization: `Bearer ${token}`}})
+        enrolledCourses.map( async (course) =>{
+          const { data } = await axios.post(`${backendUrl}/api/user/get-course-progress`,{courseId: course._id}, {headers: { Authorization: `Bearer ${token}`}})
 
            let totalLectures = calculateNumberOfLectures(course);
-           const lectureCompleted = data.progressData ? data.progrssData.lectureCompleted.length : 0;
+
+           const lectureCompleted = data.progressData
+             ? data.progressData.lectureCompleted.length
+             : 0;
            return {totalLectures, lectureCompleted}
         })
       )
@@ -36,7 +39,6 @@ const MyEnorollments = () => {
     }
   }
   useEffect(()=>{
-    
     if(userData){
       fetchUserEnrolledCourses()
     }
@@ -71,7 +73,7 @@ const MyEnorollments = () => {
                   />
                   <div className="flex-1">
                     <p className="mb-1 max-sm:text-sm">{course.courseTitle}</p>
-                    <Line strokeWidth={2} percent={progressArray[index] ? (progressArray[index].lecturecompleted*100) /progressArray[index].totalLecture :0} className='bg-gray-300  rounded-full'/>
+                    <Line strokeWidth={2} percent={progressArray[index] ? (progressArray[index].lectureCompleted * 100) /progressArray[index].totalLectures :0} className='bg-gray-300  rounded-full'/>
                   </div>
                 </td>
                 <td className="px-4 py-3 max-sm:hidden">
@@ -79,16 +81,12 @@ const MyEnorollments = () => {
                 </td>
                 <td className="px-4 py-3 max-sm:hidden">
                   {
-                    progressArray
-                      [index] &&
-                        `${progressArray[index].lecturecompleted} /${progressArray[index].totalLecture}` 
-                    
-                  }
-                  <span>Lecture </span>
+                    progressArray[index] && `${progressArray[index].lectureCompleted} / ${progressArray[index].totalLectures}`}
+                  <span> Lecture </span>
                 </td>
                 <td className="px-4 py-3 max-sm:text-right">
                   <button className="px-3 sm:px-5 py-1.5 sm:py-2 bg-red-800 max-sm:text-xs text-white" onClick={() => navigate(`/player/${course._id}`)}>
-                    {progressArray[index] && progressArray[index].lecturecompleted / progressArray[index].totalLecture===1 ? "Completed" : "On Going"}
+                    {progressArray[index] && progressArray[index].lectureCompleted / progressArray[index].totalLectures === 1 ? "Completed" : "On Going"}
                   
                   </button>
                 </td>

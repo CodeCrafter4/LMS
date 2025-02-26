@@ -17,7 +17,7 @@ export const getAllCourse = async (req, res) => {
 //Get course by Id
 
 export const getCourseId = async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params
 
     try{
         const courseData = await Course.findById(id).populate({ path: 'educator' })
@@ -27,12 +27,12 @@ export const getCourseId = async (req, res) => {
         courseData.courseContent.forEach(chapter => {
             chapter.chapterContent.forEach(lecture => {
                 if(!lecture.isPreviewFree){
-                    lecture.lectureUrl =""
+                    lecture.lectureUrl ="";
                 }
             })
         })
 
-        res.json({ success: true ,courseData});
+        res.json({ success: true, courseData});
 
 
     } catch (error) {

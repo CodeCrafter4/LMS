@@ -2,12 +2,24 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContex'
 import { assets, dummyDashboardData } from '../../assets/assets';
 import Loading from '../../components/student/Loading';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const { currency } = useContext(AppContext);
-  const [dashboardData, setDashboardData] = useState(null)
+  const { currency,backendUrl,getToken } = useContext(AppContext);
+  const [dashboardData, setDashboardData] = useState(null);
      const fechDashboardData = async ()=>{
-      setDashboardData(dummyDashboardData)
+      try{
+        const token = await getToken()
+        const { data } = await axios.get(backendUrl + '/api/educator/dashboard', { headers: { Authorization: `Bearer ${token}` } })
+        if(data.success){
+          setDashboardData(data.dashboardData);
+        }else{
+          toast.error(data.message)
+        }
+      }catch(error){
+        toast.error(error.message)
+      }
     }
     useEffect(() => {
       fechDashboardData()
@@ -80,9 +92,7 @@ const Dashboard = () => {
                       />
                       <span className="truncate">{item.student.name}</span>
                     </td>
-                    <td className="px-4 py-3 truncate">
-                      {item.courseTitle}
-                    </td>
+                    <td className="px-4 py-3 truncate">{item.courseTitle}</td>
                   </tr>
                 ))}
               </tbody>
