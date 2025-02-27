@@ -102,27 +102,30 @@ export const dummyEducatorData = {
 }
 
 export const dummyTestimonial = [
-    {
-        name: 'Donald Jackman',
-        role: 'SWE 1 @ Amazon',
-        image: assets.profile_img_1,
-        rating: 5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
-    },
-    {
-        name: 'Richard Nelson',
-        role: 'SWE 2 @ Samsung',
-        image: assets.profile_img_2,
-        rating: 4,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
-    },
-    {
-        name: 'James Washington',
-        role: 'SWE 2 @ Google',
-        image: assets.profile_img_3,
-        rating: 4.5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
-    },
+  {
+    name: "Abdella Fita",
+    role: "SEO @ AbukiTech",
+    image: assets.profile_img_1,
+    rating: 5,
+    feedback:
+      "As a first-time visitor to Abuki-Tech, I was immediately impressed by the clean layout and intuitive navigation. The search function effectively led me to the resources I needed, and the tutorials were clear and informative. However, I did notice some pages took longer than expected to load.",
+  },
+  {
+    name: "Abebe Dola",
+    role: "SEO @ AbukiTech",
+    image: assets.profile_img_2,
+    rating: 4,
+    feedback:
+      "The visual design of Abuki-Tech is top-notch, with a modern feel and responsive elements that work well on both my laptop and smartphone. The articles are well-written and authoritative, providing deep dives into emerging tech trends.",
+  },
+  {
+    name: "Yassin Goma",
+    role: "SEO @ AbukiTech",
+    image: assets.profile_img_3,
+    rating: 4.5,
+    feedback:
+      "I’ve been using Abuki-Tech for several weeks to brush up on my programming skills, and I’ve found the step-by-step coding examples extremely helpful. The interactive quizzes at the end of each module provide a good test of what I’ve learned.",
+  },
 ];
 
 export const dummyDashboardData = {
